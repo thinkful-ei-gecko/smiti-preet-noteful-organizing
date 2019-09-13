@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ApiContext from '../ApiContext';
 import config from '../config'; 
-import NotefulForm from '../NotefulForm';
+import NotefulForm from '../NotefulForm/NotefulForm'
 
 class AddFolder extends Component {
     // state = {
@@ -12,7 +12,9 @@ class AddFolder extends Component {
 
     handleSubmit = e => {
         e.preventDefault()
-        const folder = e.target.value
+        const folder = {name: e.target.folderName.value
+        }
+        console.log(folder);
 
         fetch (`${config.API_ENDPOINT}/folders`, {
             method: 'POST',
@@ -22,11 +24,14 @@ class AddFolder extends Component {
             body: JSON.stringify(folder),
         })
         .then(response => {
-            if(!response.ok)
-            return response.json().then(e => Promise.reject(e))
+            if(!response.ok){
+                return response.json().then(e => Promise.reject(e))
+                }
+                return response.json() //return response from the json server 
         })
         .then(folder => {
             this.context.addFolder(folder)
+            this.props.history.push(`/folder/${folder.id}`) //pushing the content from the server
         })
         .catch(error => {
             console.error({error});
@@ -43,7 +48,7 @@ class AddFolder extends Component {
                         <label htmlFor="folder-name">
                             Folder name
                         </label>
-                        <input type="text" placeholder="folder-name/=" id="folder-name"/>
+                        <input type="text" placeholder="folderName/=" name="folderName"/>
                     </div>
                     <button type="submit">Add Folder</button>
                 </NotefulForm>
