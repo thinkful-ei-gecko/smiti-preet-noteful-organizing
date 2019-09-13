@@ -2,21 +2,22 @@ import React, { Component } from 'react';
 import ApiContext from '../ApiContext';
 import config from '../config'; 
 import NotefulForm from '../NotefulForm/NotefulForm'
+import './AddNote.css'
 
 class AddNote extends Component {
-    // state = {
-    //     folderValid: false
-    // };
+    state = {
+        folderValid: false
+    };
     
     static contextType = ApiContext;
 
     handleSubmit = e => {
         e.preventDefault()
         const newNote = {
-            //change values for a new note based on JSX className
+            //change values for a new note based on JSX attributes
             name: e.target.noteName.value,
-            content: e.target.contentName.value
-
+            content: e.target.contentName.value,
+            folderId: e.target["note-folder-select"].value 
         }
         console.log(newNote)
 
