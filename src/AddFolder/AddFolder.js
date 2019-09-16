@@ -1,62 +1,71 @@
-import React, { Component } from 'react';
-import ApiContext from '../ApiContext';
-import config from '../config'; 
+import React, {Component} from 'react';
 import NotefulForm from '../NotefulForm/NotefulForm'
+import ApiContext from '../ApiContext';
+import config from '../config';
 
-class AddFolder extends Component {
-    // state = {
-    //     folderValid: false
-    // };
-    
+class AddFolder extends Component{
+
     static contextType = ApiContext;
 
     handleSubmit = e => {
-        e.preventDefault()
-        const folder = {name: e.target.folderName.value
+        const folder = {
+            name: e.target['folderName'].value
         }
-        console.log(folder);
-
-        fetch (`${config.API_ENDPOINT}/folders`, {
+        console.log(folder)
+        fetch (`${config.API_ENDPOINT}/folders`,{
             method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(folder),
+            headers: {'content-type': 'application/JSON'},
+            body: JSON.stringify(folder)
         })
         .then(response => {
             if(!response.ok){
                 return response.json().then(e => Promise.reject(e))
-                }
-                return response.json() //return response from the json server 
+            }
+               return response.json()
         })
         .then(folder => {
-            this.context.addFolder(folder)
-            this.props.history.push(`/folder/${folder.id}`) //pushing the content from the server
+            this.props.history.push('/')
+            this.context.AddFolder(folder)
         })
         .catch(error => {
-            console.error({error});
+            console.error({error});     
         })
-        
+        }
+
+    validateName = (event) => {
+        event.preventDefault();
+        console.log(this)
+        const name = event.target['folderName'].value.trim()
+        if (name.length === 0){
+            return this.context.setError(true)
+        } else if (name.length < 1) {
+            return this.context.setError(true)
+        } else {
+            this.handleSubmit(event)
+        }
     }
 
     render(){
         return(
-            <section className="AddFolder">
-                <p>Add a new folder</p>
-                <NotefulForm onSubmit={this.handleSubmit}>
-                    <div className="form-field">
-                        <label htmlFor="folder-name">
-                            Folder name
-                        </label>
-                        <input type="text" placeholder="folderName/=" name="folderName"/>
-                    </div>
-                    <button type="submit">Add Folder</button>
-                </NotefulForm>
-            </section>
+            <div >
+                <h2>Create A Folder</h2>
+                <NotefulForm onSubmit={this.validateName}>
+                
+                {this.context.error ? '**Invalid Name **' : ''}
+                
+                <div> 
+                    <label htmlFor="folderName">
+                        Folder Name
+                    </label>
+                    <input type="text" id="folderName"></input>
 
+                <button type="submit">Add Folder</button>
+                
+                </div>
+                </NotefulForm>
+            </div>
         )
     }
-
 }
 
 export default AddFolder;

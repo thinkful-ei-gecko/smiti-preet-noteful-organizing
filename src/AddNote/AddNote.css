@@ -1,7 +1,9 @@
-.AddNote {
-    color: #dedede;
-  }
-  
-  .AddNote h2 {
-    margin-left: 16px;
-  }
+
+h2{
+  margin-left: 10px;
+  color: white;
+}
+
+.button{
+  margin-top: 10px;
+}

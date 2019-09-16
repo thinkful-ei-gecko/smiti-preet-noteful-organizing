@@ -7,15 +7,16 @@ import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
 import ApiContext from '../ApiContext';
 import config from '../config';
-import './App.css';
 import AddFolder from '../AddFolder/AddFolder';
 import AddNote from '../AddNote/AddNote';
-
+import FoldersError from '../ErrorBoundary/ErrorPage'
+import './App.css';
 
 class App extends Component {
     state = {
         notes: [],
-        folders: []
+        folders: [],
+        error: false
     };
 
     componentDidMount() {
@@ -44,24 +45,10 @@ class App extends Component {
             notes: this.state.notes.filter(note => note.id !== noteId)
         });
     };
-
-    handleAddFolder = folder => {
-        console.log(folder);
-        this.setState({
-            folder: [...this.state.folders, folder]
-        })
-    }
-
-    handleAddNote = note => {
-        console.log(note);
-        this.setState({
-            notes: [...this.state.notes, note]
-        })
-    }
-
+    
     renderNavRoutes() {
         return (
-            <>
+            <React.Fragment>
                 {['/', '/folder/:folderId'].map(path => (
                     <Route
                         exact
@@ -71,15 +58,15 @@ class App extends Component {
                     />
                 ))}
                 <Route path="/note/:noteId" component={NotePageNav} />
-                <Route path="/add-folder" component={AddFolder} />
-                <Route path="/add-note" component={AddNote} />
-            </>
+                <Route path="/add-folder" component={NotePageNav} />
+                <Route path="/add-note" component={NotePageNav} />
+            </React.Fragment>
         );
     }
 
     renderMainRoutes() {
         return (
-            <>
+            <React.Fragment>
                 {['/', '/folder/:folderId'].map(path => (
                     <Route
                         exact
@@ -89,10 +76,30 @@ class App extends Component {
                     />
                 ))}
                 <Route path="/note/:noteId" component={NotePageMain} />
-                <Route path="/addFolder" component={AddFolder} />
-                <Route path="/addNote" component={AddNote} /> 
-            </>
+                <Route path="/add-folder" component={AddFolder} />
+                <Route path="/add-note" component={AddNote} />
+            </React.Fragment>
         );
+    }
+    HandleAddFolder=(folder)=>{
+        this.setState({
+            folders: [...this.state.folders, folder],
+            
+        })
+
+    }
+    HandleAddNote=(note)=>{
+        this.setState({
+            notes: [...this.state.notes, note],
+            
+        })
+
+    }
+
+    HandleSetError=(error)=>{
+        this.setState({
+            error: error
+        })
     }
 
     render() {
@@ -100,21 +107,25 @@ class App extends Component {
             notes: this.state.notes,
             folders: this.state.folders,
             deleteNote: this.handleDeleteNote,
-            addFolder: this.handleAddFolder,
-            addNote: this.handleAddNote
+            AddFolder: this.HandleAddFolder,
+            AddNote: this.HandleAddNote,
+            setError: this.HandleSetError,
+            error: this.state.error
         };
         return (
             <ApiContext.Provider value={value}>
-                <div className="App">
-                    <nav className="App__nav">{this.renderNavRoutes()}</nav>
-                    <header className="App__header">
-                        <h1>
-                            <Link to="/">Noteful</Link>{' '}
-                            <FontAwesomeIcon icon="check-double" />
-                        </h1>
-                    </header>
-                    <main className="App__main">{this.renderMainRoutes()}</main>
-                </div>
+                <FoldersError>
+                    <div className="App">
+                        <nav className="App__nav">{this.renderNavRoutes()}</nav>
+                        <header className="App__header">
+                            <h1>
+                                <Link to="/">Noteful</Link>{' '}
+                                <FontAwesomeIcon icon="check-double" />
+                            </h1>
+                        </header>
+                        <main className="App__main">{this.renderMainRoutes()}</main>
+                    </div>
+                </FoldersError>
             </ApiContext.Provider>
         );
     }

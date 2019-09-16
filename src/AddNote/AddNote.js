@@ -1,83 +1,57 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ApiContext from '../ApiContext';
-import config from '../config'; 
+import config from '../config';
 import NotefulForm from '../NotefulForm/NotefulForm'
-import './AddNote.css'
+import './AddNote.css';
 
-class AddNote extends Component {
-    state = {
-        folderValid: false
-    };
-    
+
+export default class AddNote extends React.Component{
     static contextType = ApiContext;
-
-    handleSubmit = e => {
-        e.preventDefault()
-        const newNote = {
-            //change values for a new note based on JSX attributes
-            name: e.target.noteName.value,
-            content: e.target.contentName.value,
-            folderId: e.target["note-folder-select"].value 
-        }
-        console.log(newNote)
-
-        fetch (`${config.API_ENDPOINT}/notes`, {
+    handleSubmit = e =>{
+        e.preventDefault();
+        const note = {
+            name: e.target['noteName'].value,
+            content: e.target['ContentName'].value,
+            folderId: e.target['note-folder-select'].value,
+            modified: new Date()
+    }
+        console.log(note)
+        fetch (`${config.API_ENDPOINT}/notes`,{
             method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(newNote),
+            headers: {'content-type': 'application/JSON'},
+            body: JSON.stringify(note)
         })
         .then(response => {
             if(!response.ok){
                 return response.json().then(e => Promise.reject(e))
-                }
-                return response.json() //return response from the json server 
+            }
+                return response.json()
         })
         .then(note => {
-            this.context.addNote(note)
-            this.props.history.push(`/folder/${note.folderId}`) //pushing the content from the server
+            this.props.history.push(`/folder/${note.folderId}`)
+            this.context.AddNote(note)
         })
-        .catch(error => {
-            console.error({error});
-        })
-        
-    }
-
-    render(){
-        const { folders=[] } = this.context;
-        return(
-            <section className="AddNote">
-                <p>Add a new note</p>
+        .catch(error => console.log(error.message))
+        }
+        render(){
+            const {folders = []} = this.context
+            return(
+                <div className="">
+                    <h2>Add a Note</h2>
                 <NotefulForm onSubmit={this.handleSubmit}>
-                    <div className="form-field">
-                        <label htmlFor="note-name">
-                            Name
-                        </label>
-                        <input type="text" placeholder="noteName/=" name="noteName"/>
-                        <label htmlFor="note-content">
-                            Content
-                        </label>
-                        <input type="text" placeholder="contentName/=" name="contentName"/>
-                        <label htmlFor="note-folder-select">
-                            Folder
-                        </label>
-                        <select name="note-folder-select">
-                            <option value="null">Select</option>
-                                {/*Need to have some sort of map() function for the folders */}
-                                {folders.map(folder =>
-                                   <option key={folder.id}>
-                                       {folder.name}
-                                   </option> )}
-                        </select>
-                    </div>
-                    <button type="submit">Add Note</button>
+                    <label htmlFor="noteName">Name</label>
+                    <input type="text" id="noteName" required></input>
+                    <label htmlFor="noteContent" >Content</label>
+                    <input type="text" id="ContentName" required></input>
+                    <label htmlFor="noteFolder">Folder</label>
+                    <select id="note-folder-select">
+                        {folders.map(folder =>
+                            <option key={folder.id} value={folder.id}>{folder.name}
+                            </option>)}
+                    </select>
+                    <button className="button" type="submit">Add Note</button>
                 </NotefulForm>
-            </section>
-
-        )
-    }
-
+                </div>
+            )
+        }
 }
-
-export default AddNote;
