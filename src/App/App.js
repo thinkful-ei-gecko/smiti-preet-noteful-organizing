@@ -11,6 +11,7 @@ import AddFolder from '../AddFolder/AddFolder';
 import AddNote from '../AddNote/AddNote';
 import FoldersError from '../ErrorBoundary/ErrorPage'
 import './App.css';
+import PropTypes from 'prop-types';
 
 class App extends Component {
     state = {
@@ -132,3 +133,13 @@ class App extends Component {
 }
 
 export default App;
+
+ApiContext.Provider.propTypes = {
+    value: PropTypes.shape({
+        notes: PropTypes.array.isRequired,
+        folders: PropTypes.array.isRequired,
+        deleteNote: PropTypes.func.isRequired,
+        AddFolder: PropTypes.func.isRequired,
+        AddNote: PropTypes.func.isRequired
+    })
+};
