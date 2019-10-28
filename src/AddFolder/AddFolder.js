@@ -12,7 +12,7 @@ class AddFolder extends Component{
             name: e.target['folderName'].value
         }
         console.log(folder)
-        fetch (`${config.API_ENDPOINT}/folders`,{
+        fetch (`${config.API_ENDPOINT}/folder`,{
             method: 'POST',
             headers: {'content-type': 'application/JSON'},
             body: JSON.stringify(folder)

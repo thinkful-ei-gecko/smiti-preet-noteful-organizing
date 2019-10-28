@@ -6,17 +6,22 @@ import './AddNote.css';
 
 
 export default class AddNote extends React.Component{
+    static defaultProps = {
+        history: {
+            push: () => {}
+        }
+    }
     static contextType = ApiContext;
     handleSubmit = e =>{
         e.preventDefault();
         const note = {
             name: e.target['noteName'].value,
             content: e.target['ContentName'].value,
-            folderId: e.target['note-folder-select'].value,
+            folderid: e.target['note-folder-select'].value,
             modified: new Date()
     }
         console.log(note)
-        fetch (`${config.API_ENDPOINT}/notes`,{
+        fetch (`${config.API_ENDPOINT}/note`,{
             method: 'POST',
             headers: {'content-type': 'application/JSON'},
             body: JSON.stringify(note)
@@ -28,7 +33,7 @@ export default class AddNote extends React.Component{
                 return response.json()
         })
         .then(note => {
-            this.props.history.push(`/folder/${note.folderId}`)
+            this.props.history.push(`/folder/${note.folderid}`)
             this.context.AddNote(note)
         })
         .catch(error => console.log(error.message))
