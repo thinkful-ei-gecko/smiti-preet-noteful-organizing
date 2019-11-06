@@ -20,7 +20,7 @@ export default class AddNote extends React.Component{
             folderid: e.target['note-folder-select'].value,
             modified: new Date()
     }
-        console.log(note)
+        
         fetch (`${config.API_ENDPOINT}/note`,{
             method: 'POST',
             headers: {'content-type': 'application/JSON'},
