@@ -11,7 +11,7 @@ class AddFolder extends Component{
         const folder = {
             name: e.target['folderName'].value
         }
-        console.log(folder)
+      
         fetch (`${config.API_ENDPOINT}/folder`,{
             method: 'POST',
             headers: {'content-type': 'application/JSON'},
@@ -34,7 +34,7 @@ class AddFolder extends Component{
 
     validateName = (event) => {
         event.preventDefault();
-        console.log(this)
+   
         const name = event.target['folderName'].value.trim()
         if (name.length === 0){
             return this.context.setError(true)
